@@ -7,9 +7,9 @@ export const PlantSchema = z.object({
   price: z.number().positive("Price must be positive"),
   stock_quantity: z.number().int().nonnegative("Stock quantity must be non-negative"),
   image_url: z.string().url("Invalid image URL"),
-  thumbnail_url: z.string().url("Invalid thumbnail URL").optional(),
-  description: z.string().optional(),
-  category: z.string().optional(),
+  thumbnail_url: z.string().url("Invalid thumbnail URL").nullable().optional(),
+  description: z.string().nullable().optional(),
+  category: z.string().nullable().optional(),
 });
 
 // Plant input schema (for adding a new plant)
@@ -22,9 +22,9 @@ export const PlantInputSchema = z.object({
     message: "Stock quantity must be a non-negative integer"
   }),
   image_url: z.string().url("Invalid image URL").or(z.string().length(0)),
-  thumbnail_url: z.string().url("Invalid thumbnail URL").optional().or(z.string().length(0)),
-  description: z.string().optional(),
-  category: z.string().optional(),
+  thumbnail_url: z.string().url("Invalid thumbnail URL").nullable().optional().or(z.string().length(0)),
+  description: z.string().nullable().optional(),
+  category: z.string().nullable().optional(),
   imageFile: z.instanceof(File).optional().nullable(),
 });
 
@@ -48,10 +48,10 @@ export const OrderItemSchema = z.object({
     price: z.number(),
     stock_quantity: z.number(),
     image_url: z.string(),
-    thumbnail_url: z.string().optional(),
-    description: z.string().optional(),
-    category: z.string().optional(),
-  }).optional(),
+    thumbnail_url: z.string().nullable().optional(),
+    description: z.string().nullable().optional(),
+    category: z.string().nullable().optional(),
+  }).nullable().optional(),
 });
 
 // Order schema
