@@ -16,13 +16,15 @@ import {
   MenuItem,
   Grid,
   Card,
-  CardMedia
+  CardMedia,
+  FormHelperText
 } from '@mui/material';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import ErrorMessage from './ErrorMessage';
-import { Plant, PlantData } from '../types';
+import { Plant } from '../types';
 import { createThumbnail, isImageFile } from '../utils/imageUtils';
 import { uploadImage, uploadDataUrl } from '../utils/storageUtils';
+import { PlantInputSchema, formatZodError, PlantInput } from '../schemas';
 
 interface AddPlantProps {
   open: boolean;
@@ -31,7 +33,7 @@ interface AddPlantProps {
 }
 
 const AddPlant: React.FC<AddPlantProps> = ({ open, handleClose, onPlantAdded }) => {
-  const [plantData, setPlantData] = useState<PlantData>({
+  const [plantData, setPlantData] = useState<PlantInput>({
     name: '',
     price: '',
     stock_quantity: '',
@@ -113,9 +115,17 @@ const AddPlant: React.FC<AddPlantProps> = ({ open, handleClose, onPlantAdded }) 
     setLoading(true);
     setError(null);
 
+    // Validate the plant data using Zod
+    const validationResult = PlantInputSchema.safeParse(plantData);
+    if (!validationResult.success) {
+      setError(formatZodError(validationResult.error));
+      setLoading(false);
+      return;
+    }
+
     try {
       let imageUrl = plantData.image_url;
-      let thumbnailUrl = plantData.thumbnail_url;
+      let thumbnailUrl = plantData.thumbnail_url || '';
 
       // Upload image if a file was selected
       if (plantData.imageFile) {

@@ -31,7 +31,9 @@ import {
   Spa as EcoIcon
 } from '@mui/icons-material';
 import AddPlant from './AddPlant';
-import { Plant, Cart } from '../types';
+import { Cart } from '../types';
+import { validatePlant } from '../schemas';
+import type { Plant } from '../schemas';
 import { getPlaceholderImage } from '../utils/imageUtils';
 
 const ITEMS_PER_PAGE = 6; // Number of plants to load at once
@@ -87,7 +89,18 @@ const Plants: React.FC<PlantsProps> = ({ setCart, cart, setPlants, plants, isAdm
 
         if (error) throw error;
 
-        setPlants(data as Plant[]);
+        // Validate each plant using Zod
+        const validatedPlants: Plant[] = [];
+        for (const plant of data) {
+          const validationResult = validatePlant(plant);
+          if (validationResult.success && validationResult.data) {
+            validatedPlants.push(validationResult.data);
+          } else {
+            console.warn('Invalid plant data:', plant, validationResult.error);
+          }
+        }
+
+        setPlants(validatedPlants);
         setHasMore(count !== null && count > data.length);
         setError(null);
       } catch (error: any) {
@@ -124,7 +137,18 @@ const Plants: React.FC<PlantsProps> = ({ setCart, cart, setPlants, plants, isAdm
 
       if (error) throw error;
 
-      setPlants(prev => [...prev, ...(data as Plant[])]);
+      // Validate each plant using Zod
+      const validatedPlants: Plant[] = [];
+      for (const plant of data) {
+        const validationResult = validatePlant(plant);
+        if (validationResult.success && validationResult.data) {
+          validatedPlants.push(validationResult.data);
+        } else {
+          console.warn('Invalid plant data:', plant, validationResult.error);
+        }
+      }
+
+      setPlants(prev => [...prev, ...validatedPlants]);
       setHasMore(data.length === ITEMS_PER_PAGE);
       setPage(nextPage);
     } catch (error: any) {

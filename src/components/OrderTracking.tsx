@@ -39,7 +39,8 @@ import {
   ArrowBack as ArrowBackIcon
 } from '@mui/icons-material';
 import ErrorMessage from './ErrorMessage';
-import { OrderWithItems } from '../types';
+import { OrderSchema, formatZodError } from '../schemas';
+import type { Order as OrderWithItems } from '../schemas';
 import { getPlaceholderImage } from '../utils/imageUtils';
 
 const orderStatuses: ('pending' | 'processing' | 'shipped' | 'delivered')[] = ['pending', 'processing', 'shipped', 'delivered'];
@@ -75,7 +76,15 @@ const OrderTracking: React.FC = () => {
         .single();
 
       if (orderError) throw orderError;
-      setOrderDetails(orderData as OrderWithItems);
+
+      // Validate the order data using Zod
+      const validationResult = OrderSchema.safeParse(orderData);
+      if (!validationResult.success) {
+        console.error('Order data validation failed:', validationResult.error);
+        throw new Error(`Invalid order data: ${formatZodError(validationResult.error)}`);
+      }
+
+      setOrderDetails(validationResult.data);
     } catch (err: any) {
       console.error('Error fetching order details:', err);
       setError('Order not found or invalid tracking ID');

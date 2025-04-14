@@ -20,7 +20,8 @@ import {
   CircularProgress,
   Chip,
   Stack,
-  useTheme
+  useTheme,
+  FormHelperText
 } from '@mui/material';
 import {
   ShoppingCart as CartIcon,
@@ -30,7 +31,8 @@ import {
 } from '@mui/icons-material';
 import ErrorMessage from './ErrorMessage';
 import { generateTrackingId } from '../utils/orderUtils';
-import { Plant, Cart, CustomerInfo, OrderTracking as OrderTrackingType } from '../types';
+import { Plant, Cart, OrderTracking as OrderTrackingType } from '../types';
+import { CustomerInfoSchema, formatZodError, CustomerInfo } from '../schemas';
 import { getPlaceholderImage } from '../utils/imageUtils';
 
 interface OrderProps {
@@ -64,6 +66,14 @@ const Order: React.FC<OrderProps> = ({ cart, plants, onOrderComplete }) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    // Validate customer information using Zod
+    const validationResult = CustomerInfoSchema.safeParse(customerInfo);
+    if (!validationResult.success) {
+      setError(formatZodError(validationResult.error));
+      setLoading(false);
+      return;
+    }
 
     try {
       const trackingId = generateTrackingId();
