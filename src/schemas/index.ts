@@ -1,5 +1,13 @@
 import { z } from 'zod';
 
+// Admin login schema
+export const AdminLoginSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters")
+});
+
+export type AdminLogin = z.infer<typeof AdminLoginSchema>;
+
 // Plant schema
 export const PlantSchema = z.object({
   id: z.string(),
