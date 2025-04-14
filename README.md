@@ -1,4 +1,32 @@
-# Getting Started with Create React App
+# Plant Catalog Application
+
+A React application for managing a plant catalog with shopping cart functionality.
+
+## Environment Setup
+
+This application uses Supabase for the backend. You need to set up environment variables to connect to your Supabase instance:
+
+1. Create a `.env` file in the root directory
+2. Add the following variables to the file:
+
+```
+REACT_APP_SUPABASE_URL=your_supabase_url_here
+REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+```
+
+3. Replace the placeholder values with your actual Supabase URL and anonymous key
+
+Note: The `.env` file is ignored by git to keep your credentials secure. A `.env.example` file is provided as a template.
+
+## Database Setup
+
+The application requires the following tables in your Supabase database:
+
+- `plants` - Stores plant information (id, name, price, stock_quantity, image_url)
+- `orders` - Stores order information (id, tracking_id, customer_name, customer_email, customer_address, total_amount, status, order_date)
+- `order_items` - Stores items in each order (id, order_id, plant_id, quantity, price_at_time)
+
+## Getting Started
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
